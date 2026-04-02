@@ -49,7 +49,9 @@ pipeline {
                         sh """
                         ${scannerHome}/bin/sonar-scanner \
                         -Dsonar.projectKey=microservices \
-                        -Dsonar.sources=.
+                        -Dsonar.projectName=microservices \
+                        -Dsonar.sources=src \
+                        -Dsonar.java.binaries=target \
                         """
                     }
                 }

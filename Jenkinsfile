@@ -43,6 +43,8 @@ pipeline {
             agent { label 'workernode2' }
             steps {
                 unstash 'source-code'
+                sh "mvn clean install -DskipTests" 
+                
                 script {
                     def scannerHome = tool 'SonarQubeScanner'
                     withSonarQubeEnv('sonarqube') {

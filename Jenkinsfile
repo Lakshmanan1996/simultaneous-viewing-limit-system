@@ -24,7 +24,7 @@ pipeline {
                 withSonarQubeEnv('sonarqube') {
                     sh """
                     mvn clean install sonar:sonar \
-                    -Dsonar.projectKey=viewing-limit-system
+                    -Dsonar.projectKey=microservices
                     """
                 }
             }

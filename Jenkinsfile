@@ -22,13 +22,16 @@ pipeline {
             steps {
                 unstash 'source-code'
                 withSonarQubeEnv('sonarqube') {
-                    sh """
-                    mvn clean install sonar:sonar \
-                    -Dsonar.projectKey=microservices
-                    """
-                }
+                sh """
+                cd check-service
+                mvn clean install sonar:sonar -Dsonar.projectKey=check-service
+
+                cd ../push-service
+                mvn clean install sonar:sonar -Dsonar.projectKey=push-service
+                """
             }
         }
+    }
 
         stage('Quality Gate') {
             agent { label 'workernode2' }

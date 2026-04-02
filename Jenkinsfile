@@ -12,7 +12,7 @@ pipeline {
         stage('Checkout Code') {
             agent { label 'workernode1' }
             steps {
-                git branch: 'master', url: "${GIT_REPO}"
+                git branch: 'main', url: "${GIT_REPO}"
             }
         }
 
@@ -47,8 +47,10 @@ pipeline {
                     def scannerHome = tool 'SonarQubeScanner'
                     withSonarQubeEnv('sonarqube') {
                         sh """
-                        mvn clean install sonar:sonar \
-                        -Dsonar.projectKey=microservices
+                        ${scannerHome}/bin/sonar-scanner \
+                        -Dsonar.projectKey=microservices \
+                        -Dsonar.sources=check-service/src,push-service/src \
+                        -Dsonar.java.binaries=check-service/target,push-service/target
                         """
                     }
                 }

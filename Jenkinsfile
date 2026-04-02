@@ -13,48 +13,19 @@ pipeline {
             agent { label 'workernode1' }
             steps {
                 git branch: 'master', url: "${GIT_REPO}"
-            }
-        }
-
-        stage('Stash Source') {
-            agent { label 'workernode1' }
-            steps {
                 stash includes: '**/*', name: 'source-code'
             }
         }
 
-        stage('Build') {
-            agent { label 'workernode1' }
-            steps {
-                unstash 'source-code'
-                sh '''
-                if [ -f package.json ]; then
-                    npm install
-                fi
-
-                if [ -f pom.xml ]; then
-                    mvn clean package
-                fi
-                '''
-            }
-        }
-
-        stage('SonarQube Analysis') {
+        stage('Build & SonarQube Analysis') {
             agent { label 'workernode2' }
             steps {
                 unstash 'source-code'
-                sh "mvn clean install -DskipTests" 
-                
-                script {
-                    def scannerHome = tool 'SonarQubeScanner'
-                    withSonarQubeEnv('sonarqube') {
-                        sh """
-                        ${scannerHome}/bin/sonar-scanner \
-                        -Dsonar.projectKey=microservices \
-                        -Dsonar.sources=check-service/src,push-service/src \
-                        -Dsonar.java.binaries=check-service/target,push-service/target
-                        """
-                    }
+                withSonarQubeEnv('sonarqube') {
+                    sh """
+                    mvn clean install sonar:sonar \
+                    -Dsonar.projectKey=viewing-limit-system
+                    """
                 }
             }
         }

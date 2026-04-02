@@ -47,11 +47,8 @@ pipeline {
                     def scannerHome = tool 'SonarQubeScanner'
                     withSonarQubeEnv('sonarqube') {
                         sh """
-                        ${scannerHome}/bin/sonar-scanner \
-                        -Dsonar.projectKey=microservices \
-                        -Dsonar.projectName=microservices \
-                        -Dsonar.sources=src \
-                        -Dsonar.java.binaries=target \
+                        mvn clean install sonar:sonar \
+                        -Dsonar.projectKey=microservices
                         """
                     }
                 }

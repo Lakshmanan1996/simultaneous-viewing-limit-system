@@ -12,7 +12,7 @@ pipeline {
         stage('Checkout Code') {
             agent { label 'workernode1' }
             steps {
-                git branch: 'main', url: "${GIT_REPO}"
+                git branch: 'master', url: "${GIT_REPO}"
             }
         }
 

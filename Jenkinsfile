@@ -51,7 +51,7 @@ pipeline {
                         -Dsonar.projectKey=microservices \
                         -Dsonar.projectName=microservices \
                         -Dsonar.sources=. \
-                        -Dsonar.exclusions=**/node_modules/*
+                        
                         """
                     }
                 }

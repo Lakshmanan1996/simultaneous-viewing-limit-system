@@ -9,15 +9,13 @@ pipeline {
 
     stages {
 
-        /* ===================== CHECKOUT ===================== */
         stage('Checkout Code') {
-            agent{ label 'workernode1' }
+            agent { label 'workernode1' }
             steps {
                 git branch: 'master', url: "${GIT_REPO}"
             }
         }
 
-        /* ===================== STASH SOURCE ===================== */
         stage('Stash Source') {
             agent { label 'workernode1' }
             steps {
@@ -25,18 +23,15 @@ pipeline {
             }
         }
 
-        /* ===================== BUILD ===================== */
         stage('Build') {
             agent { label 'workernode1' }
             steps {
                 unstash 'source-code'
                 sh '''
-                # If NodeJS project
                 if [ -f package.json ]; then
                     npm install
                 fi
 
-                # If Maven project
                 if [ -f pom.xml ]; then
                     mvn clean package
                 fi
@@ -44,18 +39,16 @@ pipeline {
             }
         }
 
-        /* ===================== SONARQUBE ===================== */
         stage('SonarQube Analysis') {
             agent { label 'workernode2' }
             steps {
                 unstash 'source-code'
-
                 script {
                     def scannerHome = tool 'SonarQubeScanner'
                     withSonarQubeEnv('sonarqube') {
                         sh """
                         ${scannerHome}/bin/sonar-scanner \
-                        -Dsonar.projectKey=microservices \
+                        -Dsonar.projectKey=viewing-limit-system \
                         -Dsonar.sources=.
                         """
                     }
@@ -63,22 +56,19 @@ pipeline {
             }
         }
 
-        /* ===================== QUALITY GATE ===================== */
         stage('Quality Gate') {
             agent { label 'workernode2' }
-            steps { 
+            steps {
                 timeout(time: 2, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
                 }
             }
         }
 
-        /* ===================== DOCKER BUILD ===================== */
         stage('Docker Build') {
             agent { label 'workernode3' }
             steps {
                 unstash 'source-code'
-
                 sh """
                 docker build -t ${DOCKERHUB_USER}/${IMAGE}:${BUILD_NUMBER} .
                 docker tag ${DOCKERHUB_USER}/${IMAGE}:${BUILD_NUMBER} ${DOCKERHUB_USER}/${IMAGE}:latest
@@ -86,24 +76,18 @@ pipeline {
             }
         }
 
-        /* ===================== TRIVY SCAN ===================== */
         stage('Trivy Scan') {
             agent { label 'workernode3' }
             steps {
-                
-
                 sh """
                 trivy image --exit-code 1 --severity HIGH,CRITICAL ${DOCKERHUB_USER}/${IMAGE}:${BUILD_NUMBER}
                 """
             }
         }
 
-        /* ===================== PUSH IMAGE ===================== */
         stage('Push Image') {
             agent { label 'workernode3' }
             steps {
-                unstash 'source-code'
-
                 withCredentials([usernamePassword(
                     credentialsId: 'dockerhub-creds',
                     usernameVariable: 'DOCKER_USER',
@@ -115,6 +99,7 @@ pipeline {
                 sh """
                 docker push ${DOCKERHUB_USER}/${IMAGE}:${BUILD_NUMBER}
                 docker push ${DOCKERHUB_USER}/${IMAGE}:latest
+                docker system prune -f
                 """
             }
         }

@@ -10,8 +10,8 @@ pipeline {
 
     environment {
 
-        Image1       = "check-service"
-        Image2       = "push-service"
+        Image1 = "check-service"
+        Image2 = "push-service"
         DOCKERHUB_USER = "lakshvar96"
         GIT_REPO = "https://github.com/kimyuuum/simultaneous-viewing-limit-system.git"
     }

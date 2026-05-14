@@ -84,13 +84,14 @@ pipeline {
                 unstash 'source-code'
                 script {
                     def scannerHome = tool 'SonarQubeScanner'
+                    
                     withSonarQubeEnv('sonarqube') {
                         sh """
-                      mvn clean install -DskipTests'
-                        -Dsonar.projectKey=microservices \
-                        -Dsonar.projectName=microservices \
-                        
-                        """
+                             mvn clean verify sonar:sonar \
+                             -DskipTests \
+                             -Dsonar.projectKey=microservices \
+                             -Dsonar.projectName=microservices \
+                             """
                     }
                 }
             }

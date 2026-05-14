@@ -92,7 +92,7 @@ pipeline {
         ===================================================== */
 
         stage('OWASP Dependency Check') {
-
+            agent { label 'workernode2'}
             steps {
 
                 dependencyCheck additionalArguments: '''

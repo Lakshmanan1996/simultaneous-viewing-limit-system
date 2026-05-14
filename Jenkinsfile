@@ -16,8 +16,8 @@ pipeline {
         GIT_REPO = "https://github.com/kimyuuum/simultaneous-viewing-limit-system.git"
     }
     
-    ===================================================== */
-        CHECKOUT
+   /* =====================================================   
+   CHECKOUT
     ===================================================== */
 
     stages {
@@ -98,7 +98,7 @@ pipeline {
         ===================================================== */
 
         stage('OWASP Dependency Check') {
-
+            agent { label 'workernode2'}
             steps {
 
                 dependencyCheck additionalArguments: '''

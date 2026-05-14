@@ -10,13 +10,13 @@ pipeline {
 
     environment {
 
-        IMAGE1 = "check-service"
-        IMAGE2 = "push-service"
+        Image1       = "check-service"
+        Image2       = "push-service"
         DOCKERHUB_USER = "lakshvar96"
         GIT_REPO = "https://github.com/kimyuuum/simultaneous-viewing-limit-system.git"
     }
     
-    /*===================================================== 
+    ===================================================== */
         CHECKOUT
     ===================================================== */
 
@@ -48,7 +48,13 @@ pipeline {
 
             steps {
                 unstash 'source-code'
+                dir('check-service') {
                 sh 'mvn clean install -DskipTests'
+                }
+
+                dir('push-service') {
+                sh 'mvn clean install -DskipTests'
+                }
             }
         }
 
@@ -92,7 +98,7 @@ pipeline {
         ===================================================== */
 
         stage('OWASP Dependency Check') {
-            agent { label 'workernode2'}
+
             steps {
 
                 dependencyCheck additionalArguments: '''

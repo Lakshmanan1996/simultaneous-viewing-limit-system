@@ -91,7 +91,7 @@ pipeline {
                              -DskipTests \
                              -Dsonar.projectKey=microservices \
                              -Dsonar.projectName=microservices \
-                             """
+                        """
                     }
                 }
             }

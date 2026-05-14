@@ -43,17 +43,21 @@ pipeline {
 
         /* ===================== Build Maven Stage ===================== */
         stage('Build') {
-            agent { label 'workernode2'}
+            agent { label 'workernode2' }
             
-
+            environment {
+                MAVEN_OPTS='--add-exports jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED --add-opens jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED'
+            }
+            
             steps {
                 unstash 'source-code'
+                
                 dir('check-service') {
-                sh 'mvn clean install -DskipTests'
+                    sh 'mvn clean install -DskipTests'
                 }
-
+                
                 dir('push-service') {
-                sh 'mvn clean install -DskipTests'
+                    sh 'mvn clean install -DskipTests'
                 }
             }
         }

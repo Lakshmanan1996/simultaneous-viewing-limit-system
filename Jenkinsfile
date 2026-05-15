@@ -156,14 +156,14 @@ pipeline {
                 sh """
                 docker build -t ${DOCKERHUB_USER}/${IMAGE1}:${BUILD_NUMBER} ./check-service
                 docker tag ${DOCKERHUB_USER}/${IMAGE1}:${BUILD_NUMBER} ${DOCKERHUB_USER}/${IMAGE1}:latest 
-
+                """
+                
                 echo "Build a image for push-service"
+                
                 sh """
                 docker build -t ${DOCKERHUB_USER}/${IMAGE2}:${BUILD_NUMBER} ./push-service
                 docker tag ${DOCKERHUB_USER}/${IMAGE2}:${BUILD_NUMBER} ${DOCKERHUB_USER}/${IMAGE2}:latest 
                 """
-
-
             }
         }
 

@@ -86,12 +86,14 @@ pipeline {
                     def scannerHome = tool 'SonarQubeScanner'
                     
                     withSonarQubeEnv('sonarqube') {
+                        dir('check-service') {
                         sh """
                              mvn clean verify sonar:sonar \
                              -DskipTests \
                              -Dsonar.projectKey=microservices \
                              -Dsonar.projectName=microservices \
                         """
+                        }
                     }
                 }
             }

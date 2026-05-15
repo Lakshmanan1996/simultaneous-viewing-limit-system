@@ -152,18 +152,24 @@ pipeline {
             agent { label 'workernode3' }
             steps {
                 unstash 'source-code'
+                
                 echo "Build a image for check-service"
+                
+                dir('check-service') {
                 sh """
-                docker build -t ${DOCKERHUB_USER}/${IMAGE1}:${BUILD_NUMBER} ./check-service
+                docker build -t ${DOCKERHUB_USER}/${IMAGE1}:${BUILD_NUMBER} .
                 docker tag ${DOCKERHUB_USER}/${IMAGE1}:${BUILD_NUMBER} ${DOCKERHUB_USER}/${IMAGE1}:latest 
                 """
+                }
                 
                 echo "Build a image for push-service"
-                
+
+                dir('push-service') {
                 sh """
-                docker build -t ${DOCKERHUB_USER}/${IMAGE2}:${BUILD_NUMBER} ./push-service
+                docker build -t ${DOCKERHUB_USER}/${IMAGE2}:${BUILD_NUMBER} .
                 docker tag ${DOCKERHUB_USER}/${IMAGE2}:${BUILD_NUMBER} ${DOCKERHUB_USER}/${IMAGE2}:latest 
                 """
+                }    
             }
         }
 

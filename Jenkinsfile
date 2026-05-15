@@ -128,14 +128,19 @@ pipeline {
         stage('OWASP Dependency Check') {
             agent { label 'workernode2'}
             steps {
+                unstash 'source-code'
+                dependencyCheck(
+                    odcInstallation: 'OWASP-DC',
+                    additionalArguments: '''
+                        --scan ${WORKSPACE}
+                        --format ALL
+                        --project "microservices"
+                    '''
+                )
 
-                dependencyCheck additionalArguments: '''
-                    --scan .
-                    --format ALL
-                ''',
-                odcInstallation: 'OWASP-DC'
-
-                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+                dependencyCheckPublisher(
+                    pattern: '**/dependency-check-report.xml'
+                )
             }
         }
 

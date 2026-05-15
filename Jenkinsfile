@@ -94,6 +94,15 @@ pipeline {
                              -Dsonar.projectName=microservices \
                         """
                         }
+                        dir('push-service') {
+                        sh """
+                             mvn clean verify sonar:sonar \
+                             -DskipTests \
+                             -Dsonar.projectKey=microservices \
+                             -Dsonar.projectName=microservices \
+                        """
+                        }
+                        
                     }
                 }
             }
